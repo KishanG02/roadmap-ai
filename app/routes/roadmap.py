@@ -9,6 +9,7 @@ from app.services.roadmap_service import generate_roadmap
 from app.services.workflow_service import run_workflow
 from app.services.ocr_service import extract_text
 from app.services.image_workflow_service import run_image_workflow
+from app.graph.roadmap_graph import run_graph
 
 router = APIRouter()
 
@@ -49,6 +50,6 @@ async def generate_from_image(
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    result = run_image_workflow(file_path)
+    result = run_graph(file_path)
 
     return result

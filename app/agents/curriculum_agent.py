@@ -1,26 +1,34 @@
+from app.services.llm_service import client
 import json
 
-from app.services.llm_service import client
 
+class CurriculumAgent:
 
-class ProjectAgent:
-
-    def run(self, role):
+    def run(self, modules):
 
         prompt = f"""
-Generate projects for:
+Generate curriculum for:
 
-{role}
+{modules}
+
+IMPORTANT:
 
 Return ONLY valid JSON.
+
+Do not include markdown.
+
+Do not include explanations.
+
+Do not include text before or after JSON.
 
 Format:
 
 {{
-  "projects": [
+  "modules": [
     {{
       "title": "",
-      "difficulty": ""
+      "overview": "",
+      "hands_on": []
     }}
   ]
 }}
@@ -30,8 +38,8 @@ Format:
             model="meta-llama/llama-3.3-70b-instruct",
             messages=[
                 {
-                    "role": "user",
-                    "content": prompt
+                    "role":"user",
+                    "content":prompt
                 }
             ]
         )
@@ -44,11 +52,5 @@ Format:
             .replace("```", "")
             .strip()
         )
-
-        start = response_text.find("{")
-        end = response_text.rfind("}")
-
-        if start != -1 and end != -1:
-            response_text = response_text[start:end + 1]
 
         return json.loads(response_text)
