@@ -7,6 +7,8 @@ from app.schemas.roadmap import RoadmapRequest
 from app.schemas.chapter import ChapterRequest
 from app.schemas.lesson import LessonRequest
 from app.schemas.learn import LearnRequest
+from app.schemas.progress import ProgressRequest
+from app.schemas.learning_path import LearningPathRequest
 
 from app.agents.chapter_agent import ChapterAgent
 from app.agents.lesson_agent import LessonAgent
@@ -16,6 +18,13 @@ from app.services.workflow_service import run_workflow
 from app.services.ocr_service import extract_text
 from app.services.image_workflow_service import run_image_workflow
 from app.services.learning_service import generate_learning_content
+from app.services.progress_service import save_progress
+from app.services.progress_service import get_progress
+from app.services.dashboard_service import get_dashboard
+from app.services.learning_path_service import save_learning_path
+from app.services.recommendation_service import (
+    get_next_chapter
+)
 
 from app.graph.roadmap_graph import run_graph
 
@@ -93,3 +102,33 @@ def learn(
         data.module,
         data.chapter
     )
+
+@router.post("/progress")
+def update_progress(
+    data: ProgressRequest
+):
+
+    return save_progress(data)
+
+@router.get("/progress")
+def fetch_progress():
+
+    return get_progress()
+
+@router.post("/learning-path")
+def learning_path(
+    data: LearningPathRequest
+):
+
+    return save_learning_path(data)
+
+@router.get("/dashboard")
+def dashboard():
+
+    return get_dashboard()
+
+@router.get("/next-chapter")
+def next_chapter():
+
+    return get_next_chapter()
+
