@@ -11,6 +11,4 @@ def generate(data: RoadmapRequest):
 
     result = generate_roadmap(data.role)
 
-    return {
-        "content": result
-    }
+    return result

@@ -1,3 +1,6 @@
+import json
+
+from app.schemas.roadmap_output import RoadmapOutput
 from app.prompts.roadmap_prompt import SYSTEM_PROMPT
 from app.services.llm_service import client
 
@@ -18,4 +21,8 @@ def generate_roadmap(role):
         ]
     )
 
-    return response.choices[0].message.content
+    response_text = response.choices[0].message.content
+
+    roadmap = json.loads(response_text)
+
+    return RoadmapOutput(**roadmap).model_dump()
