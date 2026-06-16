@@ -8,6 +8,7 @@ from app.schemas.roadmap import RoadmapRequest
 from app.services.roadmap_service import generate_roadmap
 from app.services.workflow_service import run_workflow
 from app.services.ocr_service import extract_text
+from app.services.image_workflow_service import run_image_workflow
 
 router = APIRouter()
 
@@ -37,3 +38,17 @@ async def upload_roadmap( file: UploadFile = File(...) ):
         "filename": file.filename,
         "ocr_text": extracted_text
     }
+
+@router.post("/generate-from-image")
+async def generate_from_image(
+    file: UploadFile = File(...)
+):
+
+    file_path = f"uploads/{file.filename}"
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    result = run_image_workflow(file_path)
+
+    return result
