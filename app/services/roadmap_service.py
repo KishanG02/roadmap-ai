@@ -1,28 +1,8 @@
-import json
-
-from app.schemas.roadmap_output import RoadmapOutput
-from app.prompts.roadmap_prompt import SYSTEM_PROMPT
-from app.services.llm_service import client
+from app.agents.roadmap_agent import RoadmapAgent
 
 
 def generate_roadmap(role):
 
-    response = client.chat.completions.create(
-        model="meta-llama/llama-3.3-70b-instruct",
-        messages=[
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT
-            },
-            {
-                "role": "user",
-                "content": role
-            }
-        ]
-    )
+    agent = RoadmapAgent()
 
-    response_text = response.choices[0].message.content
-
-    roadmap = json.loads(response_text)
-
-    return RoadmapOutput(**roadmap).model_dump()
+    return agent.run(role)
