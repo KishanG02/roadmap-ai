@@ -4,11 +4,19 @@ from fastapi import APIRouter
 from fastapi import UploadFile, File
 
 from app.schemas.roadmap import RoadmapRequest
+from app.schemas.chapter import ChapterRequest
+from app.schemas.lesson import LessonRequest
+from app.schemas.learn import LearnRequest
+
+from app.agents.chapter_agent import ChapterAgent
+from app.agents.lesson_agent import LessonAgent
 
 from app.services.roadmap_service import generate_roadmap
 from app.services.workflow_service import run_workflow
 from app.services.ocr_service import extract_text
 from app.services.image_workflow_service import run_image_workflow
+from app.services.learning_service import generate_learning_content
+
 from app.graph.roadmap_graph import run_graph
 
 router = APIRouter()
@@ -53,3 +61,35 @@ async def generate_from_image(
     result = run_graph(file_path)
 
     return result
+
+@router.post("/chapter")
+def generate_chapter(
+    data: ChapterRequest
+):
+
+    result = ChapterAgent().run(
+        data.module,
+        data.chapter
+    )
+
+    return result
+
+@router.post("/lesson")
+def generate_lesson(
+    data: LessonRequest
+):
+
+    return LessonAgent().run(
+        data.module,
+        data.chapter
+    )
+
+@router.post("/learn")
+def learn(
+    data: LearnRequest
+):
+
+    return generate_learning_content(
+        data.module,
+        data.chapter
+    )
